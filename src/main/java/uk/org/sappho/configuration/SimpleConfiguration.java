@@ -11,17 +11,12 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-@Singleton
 public class SimpleConfiguration implements Configuration {
 
     private final Properties properties = new Properties(System.getProperties());
     private Properties snapshotProperties = null;
     private static final Logger LOG = Logger.getLogger(SimpleConfiguration.class);
 
-    @Inject
     public SimpleConfiguration() {
 
         LOG.info("Using plain properties file configuration plugin");
