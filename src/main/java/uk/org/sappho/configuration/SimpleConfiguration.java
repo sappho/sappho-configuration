@@ -1,5 +1,8 @@
 package uk.org.sappho.configuration;
 
+import groovy.lang.GroovyClassLoader;
+
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,11 +18,12 @@ public class SimpleConfiguration implements Configuration {
 
     private final Properties properties = new Properties(System.getProperties());
     private Properties snapshotProperties = null;
-    private static final Logger LOG = Logger.getLogger(SimpleConfiguration.class);
+    private final GroovyClassLoader groovyClassLoader = new GroovyClassLoader(this.getClass().getClassLoader());
+    private static final Logger log = Logger.getLogger(SimpleConfiguration.class);
 
     public SimpleConfiguration() {
 
-        LOG.info("Using plain properties file configuration plugin");
+        log.info("Using plain properties file configuration plugin");
     }
 
     public String getProperty(String name) throws ConfigurationException {
@@ -80,6 +84,19 @@ public class SimpleConfiguration implements Configuration {
         return clazz;
     }
 
+    public Object getGroovyScriptObject(String name) throws ConfigurationException {
+
+        Object object = null;
+        String filename = getProperty(name);
+        File file = new File(filename);
+        try {
+            object = groovyClassLoader.parseClass(file).newInstance();
+        } catch (Exception e) {
+            throw new ConfigurationException("Unable to load Groovy script from " + filename, e);
+        }
+        return object;
+    }
+
     public void setProperty(String name, String value) {
 
         properties.setProperty(name, value);
@@ -87,7 +104,7 @@ public class SimpleConfiguration implements Configuration {
 
     public void load(String filename) throws ConfigurationException {
 
-        LOG.info("Loading configuration from " + filename);
+        log.info("Loading configuration from " + filename);
         try {
             Reader reader = new FileReader(filename);
             properties.load(reader);
@@ -122,7 +139,7 @@ public class SimpleConfiguration implements Configuration {
                     }
                 }
                 if (changedProperties.size() != 0) {
-                    LOG.info("Saving changed configuration items to " + filename);
+                    log.info("Saving changed configuration items to " + filename);
                     try {
                         Writer writer = new FileWriter(filename);
                         changedProperties.store(writer, null);
@@ -133,10 +150,10 @@ public class SimpleConfiguration implements Configuration {
                 }
                 snapshotProperties = null;
             } else {
-                LOG.debug("Attempt to save property changes without taking a snapshot first");
+                log.debug("Attempt to save property changes without taking a snapshot first");
             }
         } else {
-            LOG.info("configuration property " + filenameKey + " not specified so not saving property updates");
+            log.info("configuration property " + filenameKey + " not specified so not saving property updates");
         }
     }
 }
