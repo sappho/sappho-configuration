@@ -14,6 +14,8 @@ public interface Configuration {
 
     public Class<?> getPlugin(String name, String defaultPackage) throws ConfigurationException;
 
+    public Object getGroovyScriptObject(String name) throws ConfigurationException;
+
     public void setProperty(String name, String value);
 
     public void load(String filename) throws ConfigurationException;

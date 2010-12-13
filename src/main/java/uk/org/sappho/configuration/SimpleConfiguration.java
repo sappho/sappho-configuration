@@ -23,7 +23,7 @@ public class SimpleConfiguration implements Configuration {
 
     public SimpleConfiguration() {
 
-        log.info("Using plain properties file configuration plugin");
+        log.info("Using standard Java style plain text property file configuration");
     }
 
     public String getProperty(String name) throws ConfigurationException {
