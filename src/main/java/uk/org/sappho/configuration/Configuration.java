@@ -12,7 +12,7 @@ public interface Configuration {
 
     public List<String> getPropertyList(String name, List<String> defaultValue);
 
-    public Class<?> getPlugin(String name, String defaultPackage) throws ConfigurationException;
+    public <T> Class<T> getPlugin(String name, String defaultPackage) throws ConfigurationException;
 
     public Object getGroovyScriptObject(String name) throws ConfigurationException;
 
