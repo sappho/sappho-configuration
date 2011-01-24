@@ -2,6 +2,8 @@ package uk.org.sappho.configuration;
 
 import java.util.List;
 
+import com.google.inject.Module;
+
 public interface Configuration {
 
     public String getProperty(String name) throws ConfigurationException;
@@ -12,7 +14,7 @@ public interface Configuration {
 
     public List<String> getPropertyList(String name, List<String> defaultValue);
 
-    public <T> Class<T> getPlugin(String name, String defaultPackage) throws ConfigurationException;
+    public Module getGuiceModule(String name) throws ConfigurationException;
 
     public Object getGroovyScriptObject(String name) throws ConfigurationException;
 

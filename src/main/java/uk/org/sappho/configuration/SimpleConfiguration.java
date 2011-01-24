@@ -14,6 +14,8 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.Module;
+
 public class SimpleConfiguration implements Configuration {
 
     private final Properties properties = new Properties(System.getProperties());
@@ -66,22 +68,18 @@ public class SimpleConfiguration implements Configuration {
         return list;
     }
 
-    public Class<?> getPlugin(String name, String defaultPackage) throws ConfigurationException {
+    public Module getGuiceModule(String name) throws ConfigurationException {
 
         String className = getProperty(name);
-        Class<?> clazz;
+        Module module;
         try {
-            clazz = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            className = defaultPackage + "." + className;
-            try {
-                clazz = Class.forName(className);
-            } catch (ClassNotFoundException e1) {
-                throw new ConfigurationException("Unable to load plugin " + className
-                        + " from configuration parameter " + name, e1);
-            }
+            Class<?> moduleClass = Class.forName(className);
+            module = (Module) moduleClass.newInstance();
+        } catch (Exception e) {
+            throw new ConfigurationException("Unable to load module " + className
+                        + " specified in configuration parameter " + name, e);
         }
-        return clazz;
+        return module;
     }
 
     public Object getGroovyScriptObject(String name) throws ConfigurationException {
