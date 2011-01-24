@@ -6,6 +6,6 @@ public class SimpleConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Configuration.class).toInstance(new SimpleConfiguration());
+        bind(Configuration.class).to(SimpleConfiguration.class);
     }
 }
