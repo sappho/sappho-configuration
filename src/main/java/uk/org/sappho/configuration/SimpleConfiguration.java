@@ -1,8 +1,5 @@
 package uk.org.sappho.configuration;
 
-import groovy.lang.GroovyClassLoader;
-
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,15 +11,10 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import com.google.inject.Module;
-import com.google.inject.Singleton;
-
-@Singleton
 public class SimpleConfiguration implements Configuration {
 
     private final Properties properties = new Properties(System.getProperties());
     private Properties snapshotProperties = null;
-    private final GroovyClassLoader groovyClassLoader = new GroovyClassLoader(this.getClass().getClassLoader());
     private static final Logger log = Logger.getLogger(SimpleConfiguration.class);
 
     public SimpleConfiguration() {
@@ -68,33 +60,6 @@ public class SimpleConfiguration implements Configuration {
             list = defaultValue;
         }
         return list;
-    }
-
-    public Module getGuiceModule(String name) throws ConfigurationException {
-
-        String className = getProperty(name);
-        Module module;
-        try {
-            Class<?> moduleClass = Class.forName(className);
-            module = (Module) moduleClass.newInstance();
-        } catch (Exception e) {
-            throw new ConfigurationException("Unable to load module " + className
-                        + " specified in configuration parameter " + name, e);
-        }
-        return module;
-    }
-
-    public Object getGroovyScriptObject(String name) throws ConfigurationException {
-
-        Object object = null;
-        String filename = getProperty(name);
-        File file = new File(filename);
-        try {
-            object = groovyClassLoader.parseClass(file).newInstance();
-        } catch (Exception e) {
-            throw new ConfigurationException("Unable to load Groovy script from " + filename, e);
-        }
-        return object;
     }
 
     public void setProperty(String name, String value) {
